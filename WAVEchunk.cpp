@@ -7,34 +7,35 @@
 //
 
 #include "WAVEchunk.h"
+#include <cstring>
 
-chunkWAVEchunk::chunkWAVEchunk(void)  {memset(this, 0, sizeof(chunkWAVEchunk));}
-riffWAVEchunk::riffWAVEchunk(void)    {memset(this, 0, sizeof(riffWAVEchunk));}
-formatWAVEchunk::formatWAVEchunk(void){memset(this, 0, sizeof(formatWAVEchunk));}
-dataWAVEchunk::dataWAVEchunk(void)    {memset(this, 0, sizeof(dataWAVEchunk));}
+chunkWAVEchunk::chunkWAVEchunk(void):
+	chunkSize(0) {memset(chunkID, 0, sizeof(chunkID));}
+riffWAVEchunk::riffWAVEchunk(void)
+	{memset(format, 0, sizeof(format));}
+formatWAVEchunk::formatWAVEchunk(void):
+	fmtCode(0), numChan(0), sampRate(0), byteRate(0), blockAlign(0), bitsSamp(0) {}
+dataWAVEchunk::dataWAVEchunk(void) {}
 
 chunkWAVEchunk::chunkWAVEchunk(istream &inp)
 {
-    memset(this, 0, sizeof(chunkWAVEchunk));
-    inp.read((char *)this, sizeof(chunkWAVEchunk));
+    memset(this, 0, sizeof(*this));
+    inp.read((char *)this, sizeof(*this));
 }
 
 riffWAVEchunk::riffWAVEchunk(istream &inp)
 {
-    memset(this, 0, sizeof(riffWAVEchunk));
-    inp.read((char *)this, sizeof(riffWAVEchunk));
+    inp.read((char *)this, sizeof(*this));
 }
 
 formatWAVEchunk::formatWAVEchunk(istream &inp)
 {
-    memset(this, 0, sizeof(formatWAVEchunk));
-    inp.read((char *)this, sizeof(formatWAVEchunk));
+    inp.read((char *)this, sizeof(*this));
 }
 
 dataWAVEchunk::dataWAVEchunk(istream &inp)
 {
-    memset(this, 0, sizeof(dataWAVEchunk));
-    inp.read((char *)this, sizeof(dataWAVEchunk));
+    inp.read((char *)this, sizeof(*this));
 }
 
 // set data members of RIFF chunk
@@ -86,8 +87,8 @@ void riffWAVEchunk::showDetails(ostream &out)
 
 void formatWAVEchunk::showDetails(ostream &out)
 {
-  chunkWAVEchunk::showDetails(out);
-  out << "fmtCode," << fmtCode << endl;
+	chunkWAVEchunk::showDetails(out);
+	out << "fmtCode," << fmtCode << endl;
 	out << "numChan," << numChan << endl;
 	out << "sampRate," << sampRate << endl;
 	out << "byteRate," << byteRate << endl;

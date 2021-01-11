@@ -32,4 +32,6 @@ void writeOutputFile(istream &);
 void readInputFile(istream &);
 void readPilotFile(istream &);
 
+extern const int sampleRate;
+
 #endif

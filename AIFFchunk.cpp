@@ -7,43 +7,50 @@
 //
 
 #include "AIFFchunk.h"
+#include "gtap.h"
 
-chunkAIFFchunk::chunkAIFFchunk(void)   {memset(this, 0, sizeof(chunkAIFFchunk));}
-formatAIFFchunk::formatAIFFchunk(void) {memset(this, 0, sizeof(formatAIFFchunk));}
-commonAIFFchunk::commonAIFFchunk(void) {memset(this, 0, sizeof(commonAIFFchunk));}
-soundAIFFchunk::soundAIFFchunk(void)   {memset(this, 0, sizeof(soundAIFFchunk));}
+#include <cstring>
+
+chunkAIFFchunk::chunkAIFFchunk(void)
+	{memset(this, 0, sizeof(*this));}
+formatAIFFchunk::formatAIFFchunk(void)
+	{memset(formType, 0, sizeof(formType));}
+commonAIFFchunk::commonAIFFchunk(void):
+	channelCount(0), frameCount(0), sampleSize(0)
+	{memset(sampRate, 0, sizeof(sampRate));}
+soundAIFFchunk::soundAIFFchunk(void):
+	offset(0), blockSize(0) {}
 
 chunkAIFFchunk::chunkAIFFchunk(istream &inp)
 {
-    memset(this, 0, sizeof(chunkAIFFchunk));
-    inp.read((char *)this, sizeof(chunkAIFFchunk));
-    byteSwap(chunkSize);
+    memset(this, 0, sizeof(*this));
+    inp.read((char *)this, sizeof(*this));
+    byteSwap(&chunkSize);
 }
 
 formatAIFFchunk::formatAIFFchunk(istream &inp)
 {
-    memset(this, 0, sizeof(formatAIFFchunk));
-    inp.read((char *)this, sizeof(formatAIFFchunk));
-    byteSwap(chunkSize);
+    inp.read((char *)this, sizeof(*this));
+    byteSwap(&chunkSize);
 }
 
 commonAIFFchunk::commonAIFFchunk(istream &inp)
 {
-    memset(this, 0, sizeof(commonAIFFchunk));
-    inp.read((char *)this, sizeof(commonAIFFchunk));
-    byteSwap(chunkSize);
-    byteSwap(channelCount);
-    byteSwap(frameCount);
-    byteSwap(sampleSize);
+    inp.read((char *)this, sizeof(*this));
+    byteSwap(&chunkSize);
+    byteSwap(&channelCount);
+    byteSwap(&frameCount);
+    byteSwap(&sampleSize);
+    cout << "common chunkSize: " << chunkSize << endl;
 }
 
 soundAIFFchunk::soundAIFFchunk(istream &inp)
 {
-    memset(this, 0, sizeof(soundAIFFchunk));
-    inp.read((char *)this, sizeof(soundAIFFchunk));
-    byteSwap(chunkSize);
-    byteSwap(offset);
-    byteSwap(blockSize);
+    inp.read((char *)this, sizeof(*this));
+    byteSwap(&chunkSize);
+    byteSwap(&offset);
+    byteSwap(&blockSize);
+    cout << "sound chunkSize: " << chunkSize << endl;
 }
 
 formatAIFFchunk::formatAIFFchunk(int theSize)
@@ -54,7 +61,7 @@ formatAIFFchunk::formatAIFFchunk(int theSize)
     memcpy(formType, "AIFF", 4);  // not a null-terminated string
     
     // swap bytes as needed
-    byteSwap(chunkSize);
+    byteSwap(&chunkSize);
 }
 
 commonAIFFchunk::commonAIFFchunk(int theSize, double theRate)
@@ -65,13 +72,15 @@ commonAIFFchunk::commonAIFFchunk(int theSize, double theRate)
     channelCount = 2;
     frameCount = theSize / 4;
     sampleSize = 16;
-    dtox80(&theRate, &sampleRate);
-    
+    union {long double ldRate; char cRate[10];} rateUnion = {theRate};
+
     // swap bytes as needed
-    byteSwap(chunkSize);
-    byteSwap(channelCount);
-    byteSwap(frameCount);
-    byteSwap(sampleSize);
+    int i = 10;
+    while (i) {--i; sampRate[i] = rateUnion.cRate[9-i];}
+    byteSwap(&chunkSize);
+    byteSwap(&channelCount);
+    byteSwap(&frameCount);
+    byteSwap(&sampleSize);
 }
 
 soundAIFFchunk::soundAIFFchunk(int theSize)
@@ -83,9 +92,9 @@ soundAIFFchunk::soundAIFFchunk(int theSize)
     blockSize = 0;
     
     // swap bytes as needed
-    byteSwap(chunkSize);
-    byteSwap(offset);
-    byteSwap(blockSize);
+    byteSwap(&chunkSize);
+    byteSwap(&offset);
+    byteSwap(&blockSize);
 }
 
 void chunkAIFFchunk::showDetails(ostream &out)
@@ -111,7 +120,12 @@ void commonAIFFchunk::showDetails(ostream &out)
     out << "channelCount," << channelCount << endl;
     out << "frameCount," << frameCount << endl;
     out << "sampleSize," << sampleSize << endl;
-    out << "sampleRate," << x80tod(&sampleRate) << endl;
+
+    // swap bytes as needed
+    union {long double ldRate; char cRate[10];} rateUnion = {0};
+    int i = 10;
+    while (i) {--i; rateUnion.cRate[i] = sampRate[9-i];}
+    out << "sampRate," << rateUnion.ldRate << endl;
 }
 
 void soundAIFFchunk::showDetails(ostream &out)

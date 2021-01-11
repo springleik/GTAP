@@ -6,6 +6,9 @@
 //  Copyright (c) 2014 Williamsonic. All rights reserved.
 //
 
+#include <cstring>
+#include <cassert>
+
 #include "gtap.h"
 
 // data members
@@ -232,7 +235,7 @@ void readInputBurst(istream &inFile, ostream &logStream)
       inFile.read((char *)&b, 2);
       
       // swap bytes for AIFF files
-      if (typeAIFF == theFileType) {byteSwap(a); byteSwap(b);}
+      if (typeAIFF == theFileType) {byteSwap(&a); byteSwap(&b);}
       
       // analyze burst response
       // this is a single frequency discrete Fourier transform
@@ -336,7 +339,7 @@ void readPilotData(istream &inFile, ostream &logStream)
     inFile.read((char *)a, 2); inFile.read((char *)b, 2);
     
     // swap bytes for AIFF files
-    if (typeAIFF == theFileType) {byteSwap(a[0]); byteSwap(b[0]);}
+    if (typeAIFF == theFileType) {byteSwap(a); byteSwap(b);}
     
     // keep previous sums, update next
     prev[I1] = next[I1]; next[I1] = prev[I1]+a[0]-a[49]-a[50]+a[99];
@@ -732,7 +735,7 @@ void writeOutputData(ostream &outfile)
         a = short(y * leftAmpl  * 32767.0);
         b = short(y * rightAmpl * 32767.0);
         if (!phase) {a = -a; b = -b;}
-        if (typeAIFF == theFileType) {byteSwap(a); byteSwap(b);}
+        if (typeAIFF == theFileType) {byteSwap(&a); byteSwap(&b);}
       }
       else {a = b = 0;}   // write silence between bursts
       
@@ -779,7 +782,7 @@ void writePilotTone(ostream &outfile)
       a = short(y * leftAmpl  * 32767.0);
       b = short(y * rightAmpl * 32767.0);
       if (!phase) {a = -a; b = -b;}
-      if (typeAIFF == theFileType) {byteSwap(a); byteSwap(b);}
+      if (typeAIFF == theFileType) {byteSwap(&a); byteSwap(&b);}
     }
     else {a = b = 0;}   // write silence after pilot
     
