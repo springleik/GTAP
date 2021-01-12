@@ -81,7 +81,7 @@ int main(int argc, const char * argv[])
     // change a setting, expect one numeric argument
     else if ("avg" == cmd)      {str >> averaging;}
     else if ("average" == cmd)  {str >> averaging;}
-    else if ("count" == cmd)   {str >> numBursts;}
+    else if ("count" == cmd)    {str >> numBursts;}
     else if ("cycles" == cmd)   {str >> numCycles;}
     else if ("delay" == cmd)    {str >> delay;}
     else if ("int" == cmd)      {str >> burstInterval;}
@@ -487,7 +487,9 @@ bool readAIFFheader(istream &inFile, ostream &logStream)
     char s[] = "ABCD";
     memcpy(s, theChunk.chunkID, 4);
     theMap[s] = thePos;
-    inFile.seekg(theChunk.chunkSize, inFile.cur);
+    size_t theOffset = theChunk.chunkSize;
+    if (theOffset % 2) {theOffset++;}
+    inFile.seekg(theOffset, inFile.cur);
   };
   
   // show list contents on console
