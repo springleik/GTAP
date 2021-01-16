@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Williamsonic. All rights reserved.
 //
 
+#include <cstring>
+
 #include "AIFFchunk.h"
 #include "gtap.h"
-
-#include <cstring>
 
 chunkAIFFchunk::chunkAIFFchunk(void)
 	{memset(this, 0, sizeof(*this));}
