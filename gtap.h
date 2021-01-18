@@ -15,22 +15,35 @@
 #include <complex>
 #include <cmath>
 #include <map>
+
 #include "AIFFchunk.h"
 #include "WAVEchunk.h"
 
 using namespace std;
 
 // enumerations
-enum burstType {simpleSine, harmonicSine, simpleCosine, harmonicCosine, unknownBurst};
-enum fileType  {typeAIFF, typeWAVE, unknownFile};
+enum burstType
+{
+  simpleSine, harmonicSine, simpleCosine, harmonicCosine, unknownBurst
+};
+enum fileType
+{
+  typeAIFF, typeWAVE, unknownFile
+};
 
 // methods
-void showParams(ostream &);
-void showHelp(ostream &);
-void reset(void);
-void writeOutputFile(istream &);
-void readInputFile(istream &);
-void readPilotFile(istream &);
+void
+showParams (ostream&);
+void
+showHelp (ostream&);
+void
+reset (void);
+void
+writeOutputFile (istream&);
+void
+readInputFile (istream&);
+void
+readPilotFile (istream&);
 
 extern const int sampleRate;
 
