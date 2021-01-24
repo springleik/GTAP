@@ -15,6 +15,8 @@ using namespace std;
 
 //----------------------------
 // WAVE file format chunks
+// note that all chunks have even length, conforms to standards
+// https://sites.google.com/site/musicgapi/technical-documents/wav-file-format
 struct chunkWAVEchunk
 {
   // data members

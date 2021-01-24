@@ -717,6 +717,7 @@ readAIFFheader (istream &inFile, ostream &logStream)
       size_t theOffset = theChunk.chunkSize;
       if (theOffset % 2)
 	{
+	  // skip pad byte if odd chunk size
 	  theOffset++;
 	}
       inFile.seekg (theOffset, inFile.cur);
@@ -804,7 +805,13 @@ readWAVEheader (istream &inFile, ostream &logStream)
       char s[] = "ABCD";
       memcpy (s, theChunk.chunkID, 4);
       theMap[s] = thePos;
-      inFile.seekg (theChunk.chunkSize, inFile.cur);
+      size_t theOffset = theChunk.chunkSize;
+      if (theOffset % 2)
+	{
+	  // skip pad byte if odd chunk size
+	  theOffset++;
+	}
+      inFile.seekg (theOffset, inFile.cur);
     };
 
   // show list contents on console

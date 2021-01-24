@@ -15,6 +15,7 @@ using namespace std;
 
 //---------------------------
 // AIFF file format chunks
+// note that all chunks have even length, conforms to standards
 struct chunkAIFFchunk
 {
   // data members
@@ -48,9 +49,9 @@ struct commonAIFFchunk : chunkAIFFchunk
 {
   // data members
   short channelCount;   // 2 bytes
-  int frameCount;     // 4 bytes
+  int frameCount;       // 4 bytes
   short sampleSize;     // 2 bytes
-  char sampRate[10];   // 10 bytes
+  char sampRate[10];    // 10 bytes
 
   // method members
   commonAIFFchunk (void);
