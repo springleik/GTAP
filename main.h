@@ -1,13 +1,15 @@
 //
-//  gtap.h
+//  main.h
 //  gtap
 //
 //  Created by Mark Williamsen on 1/26/14.
 //  Copyright (c) 2014 Williamsonic. All rights reserved.
 //
+// http://www.williamsonic.com/DipoleMic/
+//
 
-#ifndef gtap_gtap_h
-#define gtap_gtap_h
+#ifndef gtap_main_h
+#define gtap_main_h
 
 #include <iostream>
 #include <sstream>

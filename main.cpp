@@ -9,7 +9,7 @@
 #include <cstring>
 #include <cassert>
 
-#include "gtap.h"
+#include "main.h"
 
 // data members
 burstType theBurstType = harmonicSine;  // waveform type
@@ -57,7 +57,7 @@ main (int argc, const char *argv[])
     {
       // identify first token
       stringstream str (theLine);
-      string cmd, path;
+      string cmd;
       int delta = 0;
       str >> cmd;
       if (!cmd.length ())
@@ -309,23 +309,23 @@ showHelp (ostream &out)
       "\n cycles    minimum cycles per burst"
       "\n delay     samples to start of first burst"
       "\n delta     samples to add to delay"
-      "\n find      name of input file, left|right"
+      "\n find      name of input file [log file]"
       "\n help      (this list)"
       "\n interval  total samples per interval"
       "\n left      left channel gain"
       "\n minimum   minimum samples per burst"
-      "\n phase     0|1 (output in phase)"
+      "\n phase     0|1 (output and input in phase)"
       "\n pilot     0|1 (pilot tone enabled)"
-      "\n read      name of input file, name of log file"
+      "\n read      name of input file [log file]"
       "\n right     right channel gain"
       "\n show      (measurement setup)"
       "\n sin1      (simple sine"
       "\n sin2      (harmonic sine)"
       "\n start     first frequency (Hz)"
       "\n stop      last frequency (Hz)"
-      "\n verbose   0|1 (verbose output mode)"
+      "\n verbose   0|1 (verbose output)"
       "\n wave      (wave file format)"
-      "\n write     name of output file, name of log file" << endl;
+      "\n write     name of output file [log file]" << endl;
 }
 
 // update data members for a particular frequency
@@ -486,7 +486,7 @@ readPilotData (istream &inFile, ostream &logStream)
 
   // look at 10 seconds of data
   ofstream outFile ("outPut.csv");     // overwrite temp file each time through
-  outFile << "n,I1,Q1,I2,Q2" << endl; // column headings
+  outFile << "n,I1,Q1,I2,Q2" << endl;  // column headings
   bool keep = false;
   int offset = 0;
   for (int i = 0; i < (10 * sampleRate); i++)
@@ -658,10 +658,10 @@ showBurst (ostream &out)
 void
 readInputData (istream &inFile, ostream &logStream)
 {
-  // skip over pilot tone if enabled
   inFile.seekg (2 * 2 * delay, inFile.cur);
   if (pilot)
     {
+      // skip over pilot tone if enabled
       inFile.seekg (2 * 2 * burstInterval, inFile.cur);
     }
 
